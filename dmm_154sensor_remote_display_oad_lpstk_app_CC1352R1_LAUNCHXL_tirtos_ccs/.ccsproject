@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?ccsproject version="1.0"?>
+<projectOptions>
+	<ccsVersion value="9.2.0"/>
+	<deviceVariant value="Cortex M.CC1352R1F3"/>
+	<deviceFamily value="TMS470"/>
+	<deviceEndianness value="little"/>
+	<codegenToolVersion value="18.12.3.LTS"/>
+	<isElfFormat value="true"/>
+	<connection value="common/targetdb/connections/TIXDS110_Connection.xml"/>
+	<rts value=""/>
+	<createSlaveProjects value=""/>
+	<ignoreDefaultDeviceSettings value="true"/>
+	<ignoreDefaultCCSSettings value="true"/>
+	<templateProperties value="id=dmm_154sensor_remote_display_oad_lpstk_app_CC1352R1_LAUNCHXL_tirtos_ccs.projectspec.dmm_154sensor_remote_display_oad_lpstk_app_CC1352R1_LAUNCHXL_tirtos_ccs,type=rtsc,xdcToolsVersion=3_60_02_34_core,target=ti.targets.arm.elf.M4F,platform=ti.platforms.simplelink:CC1352R1F3,buildProfile=release,isHybrid=true,configuroOptions= --compileOptions &quot;${COMPILER_FLAGS} &quot;"/>
+	<origin value="C:\ti\simplelink_cc13x2_26x2_sdk_3_40_00_02\examples\rtos\CC1352R1_LAUNCHXL\dmm\dmm_154sensor_remote_display_oad_lpstk_app\tirtos\ccs\dmm_154sensor_remote_display_oad_lpstk_app_CC1352R1_LAUNCHXL_tirtos_ccs.projectspec"/>
+	<filesToOpen value=""/>
+</projectOptions>

@@ -1,0 +1,452 @@
+<!doctype html>
+<!--
+	Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+	This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+	The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+	The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+	Code distributed by Google as part of the polymer project is also
+	subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html lang="">
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Welcome to CC1350 SensorTag</title>
+
+	    <script src="/components/gc/1.0.0/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+		<!-- Iron elements -->
+
+		<link rel="import" href="/components/gc/1.0.0/iron-image/iron-image.html">
+
+		<!-- Paper elements -->
+		<link rel="import" href="/components/gc/1.0.0/paper-material/paper-material.html">
+		<link rel="import" href="/components/gc/1.0.0/paper-card/paper-card.html">
+
+		<link rel="import" href="/components/gc/1.0.0/ti-widget-flashtool/ti-widget-flashtool.html">
+
+		<!-- Add your elements here -->
+
+		<link rel="stylesheet" href="./styles/main.css">
+		<link rel="import" href="./styles/shared-styles.html">
+
+		<!-- endreplace-->
+
+	<!-- For shared styles, shared-styles.html import in elements.html -->
+	<!--<style is="custom-style" include="shared-styles">-->
+	<style is="custom-style">
+
+			#editorDiv {
+            margin-left:80px;
+            margin-right:80px;
+            }
+
+			#cards {
+			max-width: 1000px;
+			margin-left: auto;
+			margin-right: auto;
+			}
+
+			.container {
+			@apply(--layout-horizontal);
+			@apply(--layout-wrap);
+			}
+
+			paper-card {
+				width: 100%;
+				margin-bottom: 16px;
+
+				--paper-card-header-text: {
+				font-size: 2.6em;
+				color: #189;
+				font-family: 'Roboto', arial, sans-serif;
+				font-weight: 300;
+				};
+
+			}
+
+			.fancy_inner {
+				background-size: 100%;
+				background-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 20%, rgba(0,0,0,0.8) 100%);
+				z-index:1;
+				position: absolute;
+				bottom: 41px;
+				left:16px;
+				width: 97%;
+				padding-top: 60px;
+				padding-bottom: 60px;
+			}
+
+			.fancy_inner .medium {
+			font-size:48px;
+			color: #FFFFFF;
+			padding-bottom: 8px;
+			padding-left: 80px;
+			font-family: 'Roboto', arial, sans-serif;
+			font-weight: 300;
+
+			}
+
+			.fancy_inner .small {
+			font-size: 22px;
+			color: #FFFFFF;
+			padding-bottom: 8px;
+			padding-left: 80px;
+			font-family: 'Roboto', arial, sans-serif;
+			font-weight: 300;
+			}
+
+			.circle{
+			-moz-border-radius: 50%;
+			-webkit-border-radius: 50%;
+			border-radius: 50%;
+			font-size:24px;
+			background-color:#555;
+			color:#fff;
+			min-width:30px;
+			max-width:30px;
+			height:30px;
+			display: table-cell;
+			vertical-align: middle;
+			text-align: center;
+			box-shadow: 2px 2px 2px #aaa;
+			}
+
+			.circle span {
+			position:relative;
+			top:3px;
+			}
+
+			.notelayout {
+			font-size: 12px;
+			@apply(--layout-horizontal);
+			margin: 1em;
+			background: #F1FFF7;
+			border: 1px solid #C9F0DD;
+			}
+
+			iron-list {
+			background-color: var(--paper-grey-200, #eee);
+			padding-bottom: 16px;
+			}
+
+			.item {
+			@apply(--layout-horizontal);
+			padding-bottom: 16px;
+			}
+
+			.item:focus {
+			outline: 0;
+			border-color: #666;
+			}
+
+			.pad {
+			padding: 0 16px;
+			width: 90%;
+			@apply(--layout-vertical);
+			}
+
+			.tabs {
+				--paper-tabs: {
+						background-color: #555;
+				};
+			}
+
+			a {
+			    color: #189;
+			    text-decoration: none;
+			    outline: 0;
+			}
+	</style>
+
+	<script>
+
+        var loadjsfile = function(filename) {
+            var fileref = document.createElement("script");
+            fileref.src = filename;
+            document.write( fileref.outerHTML );
+        };
+
+        var loadCSSFile = function( filename ){
+            var fileref = document.createElement("link");
+            fileref.href = filename;
+            fileref.type = "text/css";
+            fileref.rel = "stylesheet";
+            document.write( fileref.outerHTML );
+        };
+
+
+        //window.TI_CLOUD_AGENT_HOST = "dev.ti.com";
+        //window.TI_CLOUD_AGENT_PORT = "";
+
+        //var cloudServer = "http://" + window.TI_CLOUD_AGENT_HOST;
+        var cloudServer = "";
+        loadjsfile(cloudServer + "/ticloudagent/q.js");
+        loadjsfile(cloudServer + "/ticloudagent/agent.js");
+        loadCSSFile(cloudServer + "/ticloudagent/agent-flash.css");
+        loadjsfile(cloudServer + "/ticloudagent/agent-flash.js");
+</script>
+</head>
+<body unresolved class="fullbleed layout vertical">
+		<span id="browser-sync-binding"></span>
+		<template is="dom-bind" id="app">
+			<div id="cards">
+				<paper-card elevation="0">
+					<div class="card-content">
+						<iron-image style="width:969px;height:543px;" sizing="contain" src="images/sensortag_with_pencil.png">
+						</iron-image>
+						<div class="fancy_inner">
+							<div class="medium">Meet the CC1350 SensorTag</div>
+						</div>
+					</div>
+				</paper-card>
+				<paper-card heading="Meet the world's first dual-band SensorTag!" elevation="0">
+					<div class="card-content">
+						<h4>Congratulations on choosing the CC1350 Wireless MCU and SensorTag ecosystem!</h4>
+						<p>The CC1350 SensorTag is one of TI’s first dual-band kit utilizing the CC1350 which enables Sub-1GHz + BLE in a single chip solution. This new SensorTag brings easy and low cost sub-1GHz RF connections to the SensorTag ecosystem with the SimpleLink ultra-low power CC13xx family of devices. This SensorTag kit brings support for the <a href="http://www.ti.com/product/cc1350">CC1350 wireless MCU</a></p>
+						<p>The CC1350 device is a wireless MCU featuring sub-1GHz RF GFSK, Long Range Mode (LRM, a direct sequence spread spectrum modulation format), and other sub-1GHz modulations - in addition it supports 2.4GHz RF! The CC1350 device contains a 32-bit ARM&reg; Cortex&reg;-M3 processor that runs at 48 MHz as the main processor and a rich peripheral feature set that includes a unique ultra-low power sensor controller. This sensor controller is ideal for interfacing external sensors and for collecting analog and digital data autonomously while the rest of the system is in sleep mode.</p>
+						<p>The CC1350 SensorTag is supported by a large set of software examples in the CC13x0 SDK, showing best practice on how to implement and use different features of the CC1350. An overview for the software examples can be found on <a href="http://www.ti.com/tool/cc13xx-sw">this web page</a>. The CC1350 is also supported by the <a href="http://ti.com/ble-stack"> TI BLE software stack</a>, which enables full BLE connectivity.</p>
+					</div>
+				</paper-card>
+				<paper-card heading="Hardware Prerequisites" elevation="0">
+					<div class="container">
+						<div class="card-content">
+							<p>For this Out of the box project you'll need at least two CC1350 SensorTags to transmit and receive data between them, one SensorTag will act as a concentrator and one or more will act as node(s) in a wireless sensor network. Both the Concentrator and Node SensorTags can be connected to a LCD Boosterpack. Optionally you can also use CC1350 LaunchPad to act as concentrator and/or nodes.
+								<ul>
+									<li>(2) CC1350 SensorTags</li>
+									<li>Optional: (1) DEVPACK-WATCH LCD DevPacks. Only the concentrator uses LCD/UART in this demo.</li>
+								</ul>
+							</p>
+							<div>
+								<iron-image style="width:400px; height:150px;" sizing="contain" fade src="images/sensortag_back.png">
+								</iron-image>
+							</div>
+						</div>
+					</div>
+				</paper-card>
+				<paper-card heading="Explore the CC1350 resources" elevation="0">
+					<div class="card-content">
+						<span ><p>
+							To see all available resources associated with the CC1350, click on <a target="_blank" href="/tirex/#/Device/CC1350F128?link=">this link</a> to filter out all the incompatible projects and collateral.
+						</p>
+						<p>Available in resource explorer are code examples, documentation, Software Developers Guide and links to wiki articles and more. Feel free to navigate the available resources to jump-start your development.
+						</p>
+						</span>
+					</div>
+				</paper-card>
+				<paper-card heading="Out of the Box Demo" elevation="0">
+					<div class="card-content">
+						<h4>CC1350 SensorTag Out of the Box Introduction</h4>
+						<p>The CC1350 SensorTag is pre-programmed with the TI BLE stack, allowing you to connect to the device using e.g. the SensorTag iOS/Android smartphone app.
+						When connected the cc1350 device offers the same functionality as e.g. the cc2650 SensorTag. Using the built in BLE Over the Air Download (OAD) one can easily convert
+					  the CC1350 device from a BLE device into e.g. a sub-1GHz device, due to the dual mode capabilites of the CC1350. In this step by step guide we will show
+						you how to download new application images to create a small wireless sensor network. The sensor network includes a concentrator that receives sub-1GHz data and
+						Nodes that send data over the sub-1GHz link to the concentrator and in addition reconfigures the radio core on the fly to send out BLE advertisement packets.
+						A high level overview of the complete demo is shown in the picture below.</p>
+						<p><img border=0 width=625 height=468 id="Picture 3" src="images/nwk.png"></p>
+						<div class="card-content">
+							<iron-list>
+								<div class="item">
+									<div class="circle"></div>
+									<div class="pad">
+										<div class="primary">A node spends most of the time in standby to ensure lowest possible power consumption. It samples the light sensor every 50 second.
+											The node then sends its sensor data to the concentrator over sub-1GHz (50kbps, GFSK) link. The sensor data is; light value (in lux), battery level, time since last reboot, number of packets sent and the button state (BTN-1).
+											The Node then reconfigures the radio into BLE mode and send out BLE beacons, aften this the node enter standby until it is time to read the sensor again.</div>
+									</div>
+								</div>
+								<div class="item">
+									<div class="circle"></div>
+									<div class="pad">
+										<div class="primary">Concentrator is in always RX ready to receive data over the sub-1GHz link and displays the data on LCD/UART.</div>
+									</div>
+								</div>
+							</iron-list>
+							Both the Node and Concentrator can be configured to send out BLE advertisement packets, this is done by pressing BTN-2. The supported BLE advertisement formats are:
+							<br>
+							<ol>
+                            <li>Manufacturer Specific (MS) + Eddystone URL, this mode can be used with the TI SensorTag app and any app that supports Eddystone. This is the default mode for Node.</li>
+							<li>Manufacturer Specific (MS).</li>
+							<li>Google Eddystone URL + TLM (interleaved), Google's Open Source BLE beacon format which can be used with any Eddystone compatible app.</li>
+							<li>Google Eddystone UID + TLM (interleaved)</li>
+							<li>None. This is the default for Concentrator.</li>
+                            </ol>
+						</div>
+						<h4>Pre-work</h4>
+						Rev 1.4.5 of the CC1350 SensorTag contains a pre-production factory image, an update is needed in order to use all features on the CC1350 SensorTag. This procedure requires a debugger dev pack. Please update to the latest image by following the below steps, it is only needed to do this once.
+						<ol>
+						<li>Remove the battery from the CC1350SensorTag.	
+						<li>Connect debugger dev pack to the CC1350 SensorTag and connect it to your PC via USB.
+						<li>Click the button below in order to erase the external flash memory of the CC1350SensorTag. <br> NOTE: The first time you do this, a small flash utility will need to be installed locally on your PC.<br><br>
+						<ti-widget-flashtool showflashbtn id="flashtool"  deviceName="CC1350F128" fileName="CC1350SensorTag_ExtFlashErase.hex" fileFolderName="./">
+						</ti-widget-flashtool><br> 	
+						<li>Disconnect debugger dev pack
+						<li>Insert battery, observe the LED is solid on for ~1 minute and allow to run until the LED start to blink slowly. NOTE: If the LED starts immediately flashing fast then there was an issue erasing the external Flash. Insure that the debugger or any other dev packs are not connected.	
+						<li>Remove the battery from the CC1350SensorTag.
+						<li>Connect debugger dev pack to the CC1350 SensorTag and connect it to your PC via USB.
+						<li>Click the button below in order to program CC1350SensorTag with a new factory image.<br><br>
+						<ti-widget-flashtool showflashbtn id="flashtool"  deviceName="CC1350F128" fileName="CC1350SensorTag_BLE_All_v1_33.hex" fileFolderName="./">
+						</ti-widget-flashtool><br>
+						<li>Disconnect debugger dev pack and insert battery. You are now ready to begon using the CC1350SensorTag!
+						<br><br>
+						Most of the functionality is supported in both the iOS and the Android version of the SensorTag app.
+						<iron-list>
+							<div class="item">
+								<div class="circle"><span>1</span></div>
+								<div class="pad">
+									<div class="primary">Download and install TI SensorTag App from App Store (iOS) or Simplelink SensorTag from Google Play. This app is used to;<br>
+									-interact with CC1350 when in BLE connected mode<br>
+									-observe MS (Manufacturer Specific) beacons<br>
+									-OAD update of the sub-1GHz images to the CC1350SensorTag<br>
+								 </div>
+								</div>
+							</div>
+							<div class="item">
+								<div class="circle"><span>2</span></div>
+								<div class="pad">
+									<div class="primary">Download and install Google Chrome to your phone from App Store (iOS) or Android Market. This app is used to;<br>
+										-observe Google Eddystone beacons (URL, TLM and UID frame formats)<br>
+									</div>
+								</div>
+							</div>
+							<div class="item">
+								<div class="circle"><span>3</span></div>
+								<div class="pad">
+									<div class="primary">Go to <a href="https://support.google.com/chrome/answer/6239299?hl=en"> this link </a>to set up notifications for Chrome on your iOS or Android device.
+									</div>
+								</div>
+							</div>
+						</iron-list>
+						<h4>Running the BLE stack/app</h4>
+						<iron-list>
+							<div class="item">
+								<div class="circle"><span>1</span></div>
+								<div class="pad">
+									<div class="primary">Power up one CC1350 SensorTag by connecting it to your PC with the USB cable.
+								 </div>
+								</div>
+							</div>
+							<div class="item">
+								<div class="circle"><span>2</span></div>
+								<div class="pad">
+									<div class="primary">On your smartphone, start the “SensorTag” app (The app you downloaded in first step).
+									</div>
+								</div>
+							</div>
+							<div class="item">
+								<div class="circle"><span>3</span></div>
+								<div class="pad">
+									<div class="primary">Connect to the "CC1350 SensorTag" by clicking it and select “Sensor view”. <br>Tip: To check that you are connected to the correct device you can press a button. The button press will be displayed in the SensorTag app under Keys.
+									</div>
+									<p><img border=0 id="Picture 4" src="images/app_start_sc.png"></p>
+								</div>
+							</div>
+							<div class="item">
+								<div class="circle"><span>4</span></div>
+								<div class="pad">
+									<div class="primary">You can now use the SensorTag app, exactly like the CC2650 version, to control the device via the BLE connection and e.g.<br>
+									-Read sensors and view data<br>
+									-Toggle GPIOs<br>
+									-Push data to the cloud<br>
+									-FW download using the OAD service<br>
+									</div>
+									<p><img border=0 id="Picture 5" src="images/app_ble_conn_sc.png"></p>
+								</div>
+							</div>
+						</iron-list>
+						<h4>Downloading new firmware images to the device via the Over-the-Air-Download (OAD) service</h4>
+						In this step we will use a BLE connection to download a new firmware image to the device. Two different firmware images are provided:<br>
+						-sub-1GHz Coordinator<br>
+						-sub-1GHz Node<br>
+						The binary images are included in the SensorTag app in versions for use in both EU and US.<br><br>
+						<iron-list>
+							<div class="item">
+								<div class="circle"><span>1</span></div>
+								<div class="pad">
+									<div class="primary">In the SensorTag app, connect to the device as described above, then select “FW Download”. Note that if you are updating for the first time, you may have a SensorTag with pre-production software. In that case you will be asked to do an update of the factory image first. Please update that first, reconnect and proceed with the steps below.
+								 </div>
+								</div>
+							</div>
+							<div class="item">
+								<div class="circle"><span>2</span></div>
+								<div class="pad">
+									<div class="primary">Create one CC1350 SensorTag to act as sub-1GHz Coordinator:<br>
+										1. Click "select FW file"<br>
+										2. Scroll down and select rfWsnDmConcentratorOad_x_CC1350STK_x.bin.<br>
+										3. Wait until you see FW Upgrade successful message box.<br>
+										4. The device will reset and start running the new firmware image.<br>
+										<p><img border=0 id="Picture 6" src="images/fw_upgrade_sc.png"></p>
+									</div>
+								</div>
+							</div>
+							<div class="item">
+								<div class="circle"><span>3</span></div>
+								<div class="pad">
+									<div class="primary">Create one (or more) CC1350 SensorTag(s) to act as a dual mode sub-1GHz/BLE beacon Node:<br>
+										1. Click "select FW file"<br>
+										2. Scroll down and select rfWsnDmNodeOad_x_CC1350STK.bin.<br>
+										3. Wait until you see FW Upgrade successful message box.<br>
+										4. The device will reset and start running the new firmware image.<br>
+									</div>
+								</div>
+							</div>
+						</iron-list>
+						<h4>Running the sub-1GHz images</h4>
+						Now when the devices has been updated with new firmware, let's have a look at their new functionality!
+						<iron-list>
+							<div class="item">
+								<div class="circle"><span>1</span></div>
+								<div class="pad">
+									<div class="primary">Power on the Concentrator.<br>
+									If no display dev pack is used, connect UART (Application/User UART) using debugger dev pack with your favorite terminal application (ex. PuTTY or TeraTerm), use 115200 8N1.<br>
+									‘Waiting for nodes’ will be displayed on UART and LCD (LCD optional). Once a node sends data to the concentrator the data will be displayed.
+								 </div>
+								</div>
+							</div>
+							<div class="item">
+								<div class="circle"><span>2</span></div>
+								<div class="pad">
+									<div class="primary">Power on the Node(s).<br>
+										A Node will send sensor data over sub-1GHz link to the Concentrator at least every 50 seconds. Fast report interval (every second) can be activaded for 30 seconds by pressing BTN-1. After data has been sent on the sub-1GHz interface, BLE beacons are also sent.
+										Red LED blink indicates TX.
+									</div>
+								</div>
+							</div>
+							<div class="item">
+								<div class="circle"><span>3</span></div>
+								<div class="pad">
+									<div class="primary">Observe BLE beacons and sub-1GHz wireless sensor network in action!<br>
+										The BLE beacons that the devices send out can now be observed using the TI SensorTag app, for MS beacons, and e.g. Google Chrome for Eddystone beacons. The SensorTag app show the state of BTN-1 in beacon, while the Eddystone compliant app can show the URL/UID and TLM data.
+										By default the Node send out a Eddystone URL frame with a link to http://www.ti.com/product/cc1350, if you configure Google Chrome as per above you will see it in the notification center:
+										<p><img border=0 id="Picture 7" src="images/phone_chrome_notification.png"></p>
+									</div>
+								</div>
+							</div>
+						</iron-list>
+						<h5>Node details</h5>
+						-Press BTN-1 on Node. The button state is sent out both in the data payload for the sub-1GHz interface and in a BLE beacon.<br>
+						-BTN-1 also starts a fast (1s interval) report interval that lasts 30 seconds.<br>
+						-The Node sends BLE beacons that can be picked up by any BLE capable device.<br>
+						-By default the Node is sending BLE beacons with Eddystone URL + MS (prop) frame format. Press BTN-2 to toggle between supported BLE beacon formats, as described above.<br>
+						<h5>Concentrator details</h5>
+						-The Concentrator can also be configured to send BLE beacons, similar to Nodes. Use BTN-2 to cycle through beacon types.<br>
+						-The BLE beacon payload is forwarded from a selected Node forming a bridge between the sub-1GHz and BLE interfaces.<br>
+						-The ‘*’ next to the Node on Concentrator’s LCD/UART indicate which Node’s data is being used to send the BLE beacon. BTN-1 on the Concentrator is used to cycle through Nodes when multiple nodes are connected.<br><br>
+
+						<h4>Getting back to BLE stack/app mode</h4>
+						It is possible to get back to BLE stack/app mode, running the full BLE stack, by pressing both buttons down for 20s. The device will then restart in BLE mode, indicated by LED blinking.<br>
+						Alternatively, you can use the flashing button above to re-flash the factory image.
+						
+					</div>
+				</paper-card>
+			<paper-card heading="Getting Started" elevation="0">
+				<div class="card-content">
+					<b>Build your own application image and use BLE OAD to upload them to the CC1350 SensorTag.</b>
+					<p>Please visit <a href="./project0_index.html#/?collapsetree=">CC1350 Project 0 </a> for instructions on how to build your own image and use BLE OAD to download to your device.
+					</p>
+				</div>
+			</paper-card>
+			</div>
+		</template>
+	</body>
+</html>
