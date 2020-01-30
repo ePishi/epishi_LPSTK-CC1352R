@@ -101,6 +101,9 @@ extern "C"
 #define CONFIG_FRAME_CONTROL (Smsgs_dataFields_tempSensor | \
                               Smsgs_dataFields_lightSensor | \
                               Smsgs_dataFields_humiditySensor | \
+                              Smsgs_dataFields_hallEffectSensor | \
+                              Smsgs_dataFields_accelSensor | \
+                              Smsgs_dataFields_gpsSensor | \
                               Smsgs_dataFields_msgStats | \
                               Smsgs_dataFields_configSettings)
 

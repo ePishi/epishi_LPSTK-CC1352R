@@ -240,8 +240,12 @@ bool permitJoining = false;
 
 CUI_clientHandle_t csfCuiHndl;
 uint32_t collectorStatusLine;
-uint32_t deviceStatusLine;
 uint32_t numJoinDevStatusLine;
+uint32_t deviceStatusLine;
+uint32_t deviceTemp;
+uint32_t deviceHumidity;
+uint32_t deviceLight;
+uint32_t deviceGps;
 
 static uint16_t SelectedSensor;
 static uint32_t reportInterval;
@@ -462,8 +466,12 @@ void Csf_init(void *sem)
     CUI_registerMenu(csfCuiHndl, &csfMainMenu);
 
     CUI_statusLineResourceRequest(csfCuiHndl, "Status", &collectorStatusLine);
-    CUI_statusLineResourceRequest(csfCuiHndl, "Device Status", &deviceStatusLine);
     CUI_statusLineResourceRequest(csfCuiHndl, "Number of Joined Devices", &numJoinDevStatusLine);
+    CUI_statusLineResourceRequest(csfCuiHndl, "Device Status", &deviceStatusLine);
+    CUI_statusLineResourceRequest(csfCuiHndl, "    Temp",     &deviceTemp);
+    CUI_statusLineResourceRequest(csfCuiHndl, "    Humidity", &deviceHumidity);
+    CUI_statusLineResourceRequest(csfCuiHndl, "    Light", &deviceLight);
+    CUI_statusLineResourceRequest(csfCuiHndl, "    GPS", &deviceGps);
 #endif /* POWER_MEAS */
 
 #if !defined(AUTO_START)
@@ -800,9 +808,19 @@ void Csf_deviceSensorDataUpdate(ApiMac_sAddr_t *pSrcAddr, int8_t rssi,
 {
     CUI_ledToggle(csfCuiHndl, CONFIG_LED_GREEN);
 #ifndef POWER_MEAS
-    CUI_statusLinePrintf(csfCuiHndl, deviceStatusLine, "Sensor - Addr=0x%04x, Temp=%d, RSSI=%d",
-                         pSrcAddr->addr.shortAddr, pMsg->tempSensor.ambienceTemp, rssi);
     CUI_statusLinePrintf(csfCuiHndl, numJoinDevStatusLine, "%x", getNumActiveDevices());
+    CUI_statusLinePrintf(csfCuiHndl, deviceStatusLine, "Sensor - Addr=0x%04x, RSSI=%d",
+                         pSrcAddr->addr.shortAddr,
+                         rssi);
+    CUI_statusLinePrintf(csfCuiHndl, deviceTemp,     "%d", pMsg->humiditySensor.temp);
+    CUI_statusLinePrintf(csfCuiHndl, deviceHumidity, "%d", pMsg->humiditySensor.humidity);
+    CUI_statusLinePrintf(csfCuiHndl, deviceLight,    "%d", pMsg->lightSensor.rawData);
+    float latitude  = (float)pMsg->gpsSensor.latitude  / 10000000;
+    float longitude = (float)pMsg->gpsSensor.longitude / 10000000;
+    float altitude  = (float)pMsg->gpsSensor.altitude  / 1000;
+    CUI_statusLinePrintf(csfCuiHndl, deviceGps,      "lat=%f, long=%f, alt=%f", latitude,
+                                                                                longitude,
+                                                                                altitude);
 
 #endif /* endif for POWER_MEAS */
 

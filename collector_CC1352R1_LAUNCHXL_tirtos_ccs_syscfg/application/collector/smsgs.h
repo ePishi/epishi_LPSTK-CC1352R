@@ -275,6 +275,7 @@ typedef enum
     /*! Accelerometer Sensor */
     Smsgs_dataFields_accelSensor = 0x0040,
 #endif /* LPSTK */
+    Smsgs_dataFields_gpsSensor = 0x0080,
 } Smsgs_dataFields_t;
 
 /*!
@@ -454,6 +455,19 @@ typedef struct _Smsgs_accelsensorfield_t
 } Smsgs_accelSensorField_t;
 
 /*!
+ GPS Sensor Field
+ */
+typedef struct _Smsgs_gpssensorfield_t
+{
+    /*! Latitude */
+    int32_t latitude;
+    /*! longitude */
+    int32_t longitude;
+    /*! Altitude */
+    int32_t altitude;
+} Smsgs_gpsSensorField_t;
+
+/*!
  Message Statistics Field
  */
 typedef struct _Smsgs_msgstatsfield_t
@@ -607,6 +621,10 @@ typedef struct _Smsgs_sensormsg_t
      */
     Smsgs_accelSensorField_t accelerometerSensor;
 #endif /* LPSTK */
+    /*!
+     GPS Sensor field
+     */
+    Smsgs_gpsSensorField_t gpsSensor;
 } Smsgs_sensorMsg_t;
 
 /*!

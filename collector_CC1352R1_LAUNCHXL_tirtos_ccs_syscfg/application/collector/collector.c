@@ -1747,10 +1747,10 @@ static void processSensorData(ApiMac_mcpsDataInd_t *pDataInd)
                                                                      pBuf[1],
                                                                      pBuf[2],
                                                                      pBuf[3]);
-#ifdef LPSTK
         pBuf += 4;
     }
 
+#ifdef LPSTK
     if(sensorData.frameControl & Smsgs_dataFields_hallEffectSensor)
     {
         sensorData.hallEffectSensor.flux = (float) Util_buildUint32(pBuf[0],
@@ -1774,8 +1774,29 @@ static void processSensorData(ApiMac_mcpsDataInd_t *pDataInd)
         sensorData.accelerometerSensor.xTiltDet = *pBuf++;
         sensorData.accelerometerSensor.yTiltDet = *pBuf++;    
 
-#endif /* LPSTK */                               
     }
+#endif /* LPSTK */                               
+
+#ifdef GPS_SENSOR
+    if(sensorData.frameControl & Smsgs_dataFields_gpsSensor)
+    {
+        sensorData.gpsSensor.latitude = (int32_t)Util_buildUint32(pBuf[0],
+                                                                  pBuf[1],
+                                                                  pBuf[2],
+                                                                  pBuf[3]);
+        pBuf += 4;
+        sensorData.gpsSensor.longitude = (int32_t)Util_buildUint32(pBuf[0],
+                                                                   pBuf[1],
+                                                                   pBuf[2],
+                                                                   pBuf[3]);
+        pBuf += 4;
+        sensorData.gpsSensor.altitude = (int32_t)Util_buildUint32(pBuf[0],
+                                                                  pBuf[1],
+                                                                  pBuf[2],
+                                                                  pBuf[3]);
+        pBuf += 4;
+    }
+#endif /* GPS_SENSOR */
 
     Collector_statistics.sensorMessagesReceived++;
 
