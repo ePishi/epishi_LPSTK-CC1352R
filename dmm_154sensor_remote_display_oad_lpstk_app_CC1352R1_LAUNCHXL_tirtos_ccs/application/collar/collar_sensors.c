@@ -47,6 +47,7 @@
 /******************************************************************************
  Includes
  *****************************************************************************/
+#include <stdio.h>
 #include <unistd.h>
 
 #include <ti/drivers/GPIO.h>
@@ -60,7 +61,8 @@
 
 #include "ti_drivers_config.h"
 
-#include "lpstk/lpstk_sensors.h"
+#include "collar/collar_sensors.h"
+#include "sensor/GPS/ubloxGps.h"
 
 /*
  *  =============================== OPT3001 ===============================
@@ -219,6 +221,22 @@ void Lpstk_initSensorControllerAccelerometer(SCIF_VFPTR scTaskAlertCallback)
     scifInit(&scifDriverSetup);
 }
 
+void Lpstk_initGpsSensor_i2c()
+{
+    GPIO_init();
+    I2C_init();
+    I2C_Params_init(&i2cParams);
+    i2cParams.bitRate = I2C_400kHz;
+    ubloxGps_init();
+}
+
+void Lpstk_initGpsSensor()
+{
+    printf("Initializing the GPS sensor\n");
+
+    Lpstk_initGpsSensor_i2c();
+}
+
 uint8_t Lpstk_openHumidityTempSensor(void)
 {
     /* Turn on TMP116 Sensor */
@@ -322,6 +340,30 @@ uint8_t Lpstk_openAccelerometerSensor(void)
     return status;
 }
 
+uint8_t Lpstk_openGpsSensor_i2c(void)
+{
+    uint8_t openStatus = LPSTK_NULL_HANDLE;
+    if (i2cHandle == NULL)
+    {
+        i2cHandle = I2C_open(CONFIG_I2C_0, &i2cParams);
+        printf("Opened the GPS sensor, i2cHandle=%p\n", i2cHandle);
+    }
+    if (i2cHandle != NULL) {
+        if (ubloxGps_open(i2cHandle)) {
+            openStatus = LPSTK_SUCCESS;
+        }
+        else {
+           printf("Ublox GPS not detected at default I2C address\n");
+        }
+    }
+    return openStatus;
+}
+
+uint8_t Lpstk_openGpsSensor(void)
+{
+    return Lpstk_openGpsSensor_i2c();
+}
+
 bool Lpstk_readTemperatureSensor(float *temperature)
 {
     bool successRead = false;
@@ -370,6 +412,39 @@ void Lpstk_readAccelerometerSensor(Lpstk_Accelerometer *accel)
     accel->y = scifTaskData.spiAccelerometer.output.y;
     accel->yTiltDet = scifTaskData.spiAccelerometer.output.yTiltDet;
     accel->z = scifTaskData.spiAccelerometer.output.z;
+}
+
+GpsLocation* Lpstk_readGpsSensor_i2c(Lpstk_Gps *gps)
+{
+    if (i2cHandle == NULL) {
+       printf("Lpstk_readGpsSensor() - ERROR: i2cHandle=NULL") ;
+       return NULL;
+    }
+
+    return ubloxGps_getLocation();
+}
+
+void Lpstk_readGpsSensor(Lpstk_Gps *gps)
+{
+    printf("=== Reading GPS DATA ===\n");
+
+    GpsLocation* gpsLocationP = Lpstk_readGpsSensor_i2c(gps);
+
+    printf("========================\n");
+
+    if (gpsLocationP != NULL) {
+        gps->latitude  = gpsLocationP->latitude;
+        gps->longitude = gpsLocationP->longitude;
+        gps->altitude  = gpsLocationP->altitude;
+    } else {
+        gps->latitude  = 0;
+        gps->longitude = 0;
+        gps->altitude  = 0;
+    }
+    printf("   --- Latitude=%f, longitude=%f, altitude=%f\n",
+           (float)(int32_t)gps->latitude / 10000000,
+           (float)(int32_t)gps->longitude / 10000000,
+           ((float)gps->altitude) / 1000);
 }
 
 void Lpstk_shutdownHumidityTempSensor(void)
@@ -424,6 +499,17 @@ void Lpstk_shutdownAccelerometerSensor(void)
       // Wait for sensor controller ready callback
       sc_ready = false;
     }
+}
+
+void Lpstk_shutdownGpsSensor_i2c(void)
+{
+    closeI2C();
+}
+
+void Lpstk_shutdownGpsSensor(void)
+{
+    printf("Shutting down GPS sensor\n");
+    Lpstk_shutdownGpsSensor_i2c();
 }
 
 static void scCtrlReadyCallback(void)

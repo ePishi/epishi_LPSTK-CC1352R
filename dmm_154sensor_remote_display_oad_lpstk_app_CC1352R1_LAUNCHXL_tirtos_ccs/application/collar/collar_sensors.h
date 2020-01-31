@@ -57,7 +57,7 @@
 
 #include <ti/drivers/GPIO.h>
 
-#include "lpstk/adxl362/scif.h"
+#include "collar/adxl362/scif.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -92,11 +92,19 @@ typedef struct
 
 typedef struct
 {
-    float      humidity;
-    float   temperature;
-    float         lux;
+    int32_t  latitude;   ///< For observation: Latest latitude sample
+    int32_t  longitude;  ///< For observation: Latest longitude sample
+    int32_t  altitude;   ///< For observation: Latest altitude sample
+} Lpstk_Gps;
+
+typedef struct
+{
+    float               humidity;
+    float               temperature;
+    float               lux;
     Lpstk_Accelerometer accelerometer;
-    float    halleffectMagFlux;
+    float               halleffectMagFlux;
+    Lpstk_Gps           gps;
 } Lpstk_Sensors;
 
 void Lpstk_initHumidityAndTempSensor(float hHiLim, float hLoLim,
@@ -105,22 +113,26 @@ void Lpstk_initHumidityAndTempSensor(float hHiLim, float hLoLim,
 void Lpstk_initLightSensor(float hHiLim, float hLoLim,GPIO_CallbackFxn opt3001Callback);
 void Lpstk_initHallEffectSensor();
 void Lpstk_initSensorControllerAccelerometer(SCIF_VFPTR scTaskAlertCallback);
+void Lpstk_initGpsSensor();
 
 uint8_t Lpstk_openHumidityTempSensor(void);
 uint8_t Lpstk_openLightSensor(void);
 uint8_t Lpstk_openHallEffectSensor(void);
 uint8_t Lpstk_openAccelerometerSensor(void);
+uint8_t Lpstk_openGpsSensor(void);
 
 bool Lpstk_readTemperatureSensor(float *temperature);
 bool Lpstk_readHumiditySensor(float *humidity);
 bool Lpstk_readLightSensor(float *lux);
 bool Lpstk_readHallEffectSensor(float *flux);
 void Lpstk_readAccelerometerSensor(Lpstk_Accelerometer *accel);
+void Lpstk_readGpsSensor(Lpstk_Gps *gps);
 
 void Lpstk_shutdownHumidityTempSensor(void);
 void Lpstk_shutdownLightSensor(void);
 void Lpstk_shutdownHallEffectSensor(void);
 void Lpstk_shutdownAccelerometerSensor(void);
+void Lpstk_shutdownGpsSensor(void);
 
 
 #ifdef __cplusplus

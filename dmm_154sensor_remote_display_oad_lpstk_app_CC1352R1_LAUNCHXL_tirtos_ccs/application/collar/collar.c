@@ -58,7 +58,7 @@
 
 #include "ti_drivers_config.h"
 
-#include "lpstk/lpstk.h"
+#include "collar/collar.h"
 
 /******************************************************************************
  Constants and definitions
@@ -292,6 +292,11 @@ void Lpstk_getAccelerometer(Lpstk_Accelerometer *accel)
 {
     memcpy(accel, &lpstkSensors.accelerometer, sizeof(Lpstk_Accelerometer));
 }
+//get last GPS
+void Lpstk_getGps(Lpstk_Gps *gps)
+{
+    memcpy(gps, &lpstkSensors.gps, sizeof(Lpstk_Gps));
+}
 //get last hall
 float Lpstk_getMagFlux()
 {
@@ -419,6 +424,16 @@ static void processSensorRead(Lpstk_SensorMask sensors, bool shutdown)
     if(sensors & LPSTK_HALL_EFFECT)
     {
         Lpstk_readHallEffectSensor(&lpstkSensors.halleffectMagFlux);
+    }
+
+    if(sensors & LPSTK_GPS)
+    {
+        Lpstk_readGpsSensor(&lpstkSensors.gps);
+        /* GPS should only be shut down from a LPSTK_EV_SENSOR_SHUTDOWN
+         * since the accelerometer is handled by the sensor controller
+         * therefore un-set the GPS from the mask here to prevent it
+         * from being shut down if shutdown == true*/
+        sensors ^= LPSTK_GPS;
     }
 
     if(shutdown)

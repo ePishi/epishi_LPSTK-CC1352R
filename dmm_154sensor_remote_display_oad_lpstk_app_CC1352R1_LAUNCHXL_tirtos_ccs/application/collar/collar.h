@@ -51,7 +51,7 @@
  *****************************************************************************/
 #include <ti/sysbios/knl/Event.h>
 
-#include "lpstk/lpstk_sensors.h"
+#include "collar/collar_sensors.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -75,6 +75,7 @@ typedef enum
     LPSTK_LIGHT         = Event_Id_02,
     LPSTK_ACCELEROMETER = Event_Id_03,
     LPSTK_HALL_EFFECT   = Event_Id_04,
+    LPSTK_GPS           = Event_Id_05,
 } Lpstk_SensorMask;
 
 /******************************************************************************
@@ -93,6 +94,7 @@ void Lpstk_setSensorReadTimer(Lpstk_SensorMask sensors, uint32_t clockPeriod);
 float Lpstk_getTemperature(void);
 float Lpstk_getHumidity(void);
 void Lpstk_getAccelerometer(Lpstk_Accelerometer *accel);
+void Lpstk_getGps(Lpstk_Gps *gps);
 float Lpstk_getMagFlux(void);
 float Lpstk_getLux(void);
 

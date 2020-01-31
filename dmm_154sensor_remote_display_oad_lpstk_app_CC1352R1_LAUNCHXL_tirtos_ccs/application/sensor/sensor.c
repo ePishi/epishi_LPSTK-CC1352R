@@ -47,6 +47,7 @@
 /******************************************************************************
  Includes
  *****************************************************************************/
+#include <stdio.h>
 #include <string.h>
 #include <stdint.h>
 #include "mac_util.h"
@@ -74,7 +75,7 @@
 #endif /* USE_DMM */
 
 #ifdef LPSTK
-#include "lpstk/lpstk.h"
+#include "collar/collar.h"
 #endif /* LPSTK */
 
 #include "cui.h"
@@ -226,6 +227,13 @@ STATIC Smsgs_hallEffectSensorField_t hallEffectSensor =
 STATIC Smsgs_accelSensorField_t accelerometerSensor =
     { 0 };
 #endif /* LPSTK */
+
+/*!
+ GPS Sensor field - valid only if Smsgs_dataFields_humiditySensor
+ is set in frameControl.
+ */
+STATIC Smsgs_gpsSensorField_t gpsSensor =
+    { 0 };
 
 #endif //OAD_IMG_A
 
@@ -466,9 +474,13 @@ void Sensor_init(void)
                                    Smsgs_dataFields_hallEffectSensor |
                                    Smsgs_dataFields_accelSensor;
 #endif /* LPSTK */
+#if defined(GPS_SENSOR)
+    configSettings.frameControl |= Smsgs_dataFields_gpsSensor;
+#endif /* GPS_SENSOR */
     configSettings.frameControl |= Smsgs_dataFields_msgStats;
     configSettings.frameControl |= Smsgs_dataFields_configSettings;
 
+    printf("sensorInit(): frameControl=%#X\n", configSettings.frameControl);
     if(!CERTIFICATION_TEST_MODE)
     {
         configSettings.reportingInterval = CONFIG_REPORTING_INTERVAL;
@@ -617,6 +629,7 @@ void Sensor_process(void)
             if(Ssf_getConfigInfo(&configInfo) == true)
             {
                 /* Save the config information */
+                printf("We have saved config, frameControl=%#X\n", configInfo.frameControl);
                 configSettings.frameControl = configInfo.frameControl;
                 configSettings.reportingInterval = configInfo.reportingInterval;
                 configSettings.pollingInterval = configInfo.pollingInterval;
@@ -1469,6 +1482,12 @@ static void processSensorMsgEvt(void)
     }
 #endif /* LPSTK */
 
+    if(sensor.frameControl & Smsgs_dataFields_gpsSensor)
+    {
+        memcpy(&sensor.gpsSensor, &gpsSensor,
+               sizeof(Smsgs_gpsSensorField_t));
+    }
+
     /* inform the user interface */
     Ssf_sensorReadingUpdate(&sensor);
 
@@ -1503,6 +1522,13 @@ static void readSensors(void)
     accelerometerSensor.xTiltDet = accel.xTiltDet;
     accelerometerSensor.yTiltDet = accel.yTiltDet;
 #endif /* LPSTK */
+#if defined(GPS_SENSOR)
+    Lpstk_Gps gps;
+    Lpstk_getGps(&gps);
+    gpsSensor.latitude = gps.latitude;
+    gpsSensor.longitude = gps.longitude;
+    gpsSensor.altitude = gps.altitude;
+#endif /* GPS_SENSOR */
 }
 
 /*!
@@ -1519,6 +1545,7 @@ static bool sendSensorMessage(ApiMac_sAddr_t *pDstAddr, Smsgs_sensorMsg_t *pMsg)
     uint8_t *pMsgBuf;
     uint16_t len = SMSGS_BASIC_SENSOR_LEN;
 
+    printf("In sendSensorMessage, frameCtrl=%#0X\n", pMsg->frameControl);
     /* Figure out the length */
     if(pMsg->frameControl & Smsgs_dataFields_tempSensor)
     {
@@ -1551,6 +1578,12 @@ static bool sendSensorMessage(ApiMac_sAddr_t *pDstAddr, Smsgs_sensorMsg_t *pMsg)
         len += sizeof(Smsgs_accelSensorField_t);
     }
 #endif /* LPSTK */
+#if defined(GPS_SENSOR)
+    if(pMsg->frameControl & Smsgs_dataFields_gpsSensor)
+    {
+        len += sizeof(Smsgs_gpsSensorField_t);
+    }
+#endif /* GPS_SENSOR */
     pMsgBuf = (uint8_t *)Ssf_malloc(len);
     if(pMsgBuf)
     {
@@ -1638,6 +1671,18 @@ static bool sendSensorMessage(ApiMac_sAddr_t *pDstAddr, Smsgs_sensorMsg_t *pMsg)
             *pBuf++ = pMsg->accelerometerSensor.yTiltDet;
         }
 #endif /* LPSTK */
+#if defined(GPS_SENSOR)
+        if(pMsg->frameControl & Smsgs_dataFields_gpsSensor)
+        {
+            printf("Encoding GPS data\n");
+            pBuf = Util_bufferUint32(pBuf,
+                                     pMsg->gpsSensor.latitude);
+            pBuf = Util_bufferUint32(pBuf,
+                                     pMsg->gpsSensor.longitude);
+            pBuf = Util_bufferUint32(pBuf,
+                                     pMsg->gpsSensor.altitude);
+        }
+#endif /* GPS_SENSOR */
         ret = Sensor_sendMsg(Smsgs_cmdIds_sensorData, pDstAddr, true, len, pMsgBuf);
 
         Ssf_free(pMsgBuf);
@@ -1866,6 +1911,12 @@ static uint16_t validateFrameControl(uint16_t frameControl)
     }
 #endif /* LPSTK */
 #endif
+#if defined(GPS_SENSOR)
+    if(frameControl & Smsgs_dataFields_gpsSensor)
+    {
+        newFrameControl |= Smsgs_dataFields_gpsSensor;
+    }
+#endif /* GPS_SENSOR */
     if(frameControl & Smsgs_dataFields_msgStats)
     {
         newFrameControl |= Smsgs_dataFields_msgStats;
