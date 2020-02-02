@@ -232,8 +232,6 @@ void Lpstk_initGpsSensor_i2c()
 
 void Lpstk_initGpsSensor()
 {
-    printf("Initializing the GPS sensor\n");
-
     Lpstk_initGpsSensor_i2c();
 }
 
@@ -346,7 +344,6 @@ uint8_t Lpstk_openGpsSensor_i2c(void)
     if (i2cHandle == NULL)
     {
         i2cHandle = I2C_open(CONFIG_I2C_0, &i2cParams);
-        printf("Opened the GPS sensor, i2cHandle=%p\n", i2cHandle);
     }
     if (i2cHandle != NULL) {
         if (ubloxGps_open(i2cHandle)) {
@@ -426,11 +423,8 @@ GpsLocation* Lpstk_readGpsSensor_i2c(Lpstk_Gps *gps)
 
 void Lpstk_readGpsSensor(Lpstk_Gps *gps)
 {
-    printf("=== Reading GPS DATA ===\n");
-
     GpsLocation* gpsLocationP = Lpstk_readGpsSensor_i2c(gps);
 
-    printf("========================\n");
 
     if (gpsLocationP != NULL) {
         gps->latitude  = gpsLocationP->latitude;
@@ -441,10 +435,14 @@ void Lpstk_readGpsSensor(Lpstk_Gps *gps)
         gps->longitude = 0;
         gps->altitude  = 0;
     }
+    /*
+    printf("=============================================\n");
     printf("   --- Latitude=%f, longitude=%f, altitude=%f\n",
            (float)(int32_t)gps->latitude / 10000000,
            (float)(int32_t)gps->longitude / 10000000,
-           ((float)gps->altitude) / 1000);
+           (float)gps->altitude / 1000);
+    printf("=============================================\n");
+    */
 }
 
 void Lpstk_shutdownHumidityTempSensor(void)
@@ -508,7 +506,6 @@ void Lpstk_shutdownGpsSensor_i2c(void)
 
 void Lpstk_shutdownGpsSensor(void)
 {
-    printf("Shutting down GPS sensor\n");
     Lpstk_shutdownGpsSensor_i2c();
 }
 
