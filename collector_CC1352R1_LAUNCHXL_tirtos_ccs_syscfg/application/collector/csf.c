@@ -410,7 +410,7 @@ void Csf_init(void *sem)
     CUI_clientParamsInit(&clientParams);
 
     strncpy(clientParams.clientName, "154 Collector", MAX_CLIENT_NAME_LEN);
-    clientParams.maxStatusLines = 3;
+    clientParams.maxStatusLines = 8;
 
 #ifdef FEATURE_SECURE_COMMISSIONING
     clientParams.maxStatusLines++;
@@ -815,12 +815,15 @@ void Csf_deviceSensorDataUpdate(ApiMac_sAddr_t *pSrcAddr, int8_t rssi,
     CUI_statusLinePrintf(csfCuiHndl, deviceTemp,     "%d", pMsg->humiditySensor.temp);
     CUI_statusLinePrintf(csfCuiHndl, deviceHumidity, "%d", pMsg->humiditySensor.humidity);
     CUI_statusLinePrintf(csfCuiHndl, deviceLight,    "%d", pMsg->lightSensor.rawData);
-    float latitude  = (float)pMsg->gpsSensor.latitude  / 10000000;
-    float longitude = (float)pMsg->gpsSensor.longitude / 10000000;
-    float altitude  = (float)pMsg->gpsSensor.altitude  / 1000;
-    CUI_statusLinePrintf(csfCuiHndl, deviceGps,      "lat=%f, long=%f, alt=%f", latitude,
-                                                                                longitude,
-                                                                                altitude);
+    //float latitude  = (float)(int32_t)pMsg->gpsSensor.latitude  / 10000000;
+    //float longitude = (float)(int32_t)pMsg->gpsSensor.longitude / 10000000;
+    //float altitude  = (float)pMsg->gpsSensor.altitude  / 1000;
+    //CUI_statusLinePrintf(csfCuiHndl, deviceGps,      "lat=%f, long=%f, alt=%f", latitude,
+    //                                                                            longitude,
+    //                                                                            altitude);
+    CUI_statusLinePrintf(csfCuiHndl, deviceGps,      "lat=%d, long=%d, alt=%d", (int32_t)pMsg->gpsSensor.latitude,
+                                                                                (int32_t)pMsg->gpsSensor.longitude,
+                                                                                (int32_t)pMsg->gpsSensor.altitude);
 
 #endif /* endif for POWER_MEAS */
 
