@@ -146,6 +146,7 @@ void Lpstk_init(void *evntHandle, Lpstk_AccelTiltCb accelCb)
     Lpstk_initLightSensor(0, 0,NULL);
     Lpstk_initHallEffectSensor();
     Lpstk_initSensorControllerAccelerometer(scAccelTaskAlertCallback);
+    Lpstk_initGpsSensor();
     Lpstk_openAccelerometerSensor();
 }
 
@@ -368,6 +369,10 @@ static void powerUpSensors(Lpstk_SensorMask sensors)
     {
         Lpstk_openHallEffectSensor();
     }
+    if(sensors & LPSTK_GPS)
+    {
+        Lpstk_openGpsSensor();
+    }
 }
 
 static void shutDownSensors(Lpstk_SensorMask sensors)
@@ -391,6 +396,10 @@ static void shutDownSensors(Lpstk_SensorMask sensors)
     if(sensors & LPSTK_HALL_EFFECT)
     {
         Lpstk_shutdownHallEffectSensor();
+    }
+    if(sensors & LPSTK_GPS)
+    {
+        Lpstk_shutdownGpsSensor();
     }
 }
 
