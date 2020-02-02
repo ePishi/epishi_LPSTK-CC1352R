@@ -98,13 +98,15 @@ bool SFE_UBLOX_GPS::begin(Stream &serialPort)
 }
 */
 
-void SFE_UBLOX_GPS::enableDebugging(DebugStream* debugStream) {
+void SFE_UBLOX_GPS::setDebugStream(DebugStream* debugStream) {
   _debugSerial = debugStream;
+}
+
+void SFE_UBLOX_GPS::enableDebugging() {
   _printDebug = true; //Should we print the commands we send? Good for debugging
 }
 
 void SFE_UBLOX_GPS::disableDebugging() {
-  _debugSerial = NULL;
   _printDebug = false; //Turn off extra print statements
 }
 

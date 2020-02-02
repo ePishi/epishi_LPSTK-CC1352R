@@ -533,7 +533,8 @@ public:
 
 	bool getRELPOSNED(uint16_t maxWait = 1100); //Get Relative Positioning Information of the NED frame
 
-	void enableDebugging(DebugStream* debugStream);
+	void setDebugStream(DebugStream* debugStream);
+	void enableDebugging();
 	void disableDebugging();
 	//void enableDebugging(Stream &debugPort = Serial);  //Given a port to print to, enable debug messages
 	//void disableDebugging(void);					   //Turn off debug statements
