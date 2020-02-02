@@ -4,7 +4,7 @@
 
 static SFE_UBLOX_GPS* ubloxGpsP = NULL;
 static GpsLocation gpsLocation;
-static DebugStream debugStream;
+//static DebugStream debugStream;
 
 void ubloxGps_init(void) {
 }
@@ -12,10 +12,10 @@ void ubloxGps_init(void) {
 bool ubloxGps_open(I2C_Handle i2cHandle) {
 
     if (ubloxGpsP == NULL) {
-        printf("Creating SFE_UBLOX_GPS object\n");
         ubloxGpsP = new SFE_UBLOX_GPS();
-        //ubloxGpsP->enableDebugging(&debugStream);
-        ubloxGpsP->enableNMEAOutput();
+        //ubloxGpsP->setDebugStream(&debugStream);
+        //ubloxGpsP->enableDebugging();
+        //ubloxGpsP->enableNMEAOutput();
         /*
          * The library's begin() function returns the result of isConnected()
          * which is a zero read and write I2C transaction. TI doesn't seem to
