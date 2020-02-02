@@ -480,7 +480,7 @@ void Sensor_init(void)
     configSettings.frameControl |= Smsgs_dataFields_msgStats;
     configSettings.frameControl |= Smsgs_dataFields_configSettings;
 
-    printf("sensorInit(): frameControl=%#X\n", configSettings.frameControl);
+    //printf("sensorInit(): frameControl=%#X\n", configSettings.frameControl);
     if(!CERTIFICATION_TEST_MODE)
     {
         configSettings.reportingInterval = CONFIG_REPORTING_INTERVAL;
@@ -514,8 +514,9 @@ void Sensor_init(void)
     Lpstk_initSensorReadTimer((Lpstk_SensorMask)(LPSTK_HUMIDITY|
                                                 LPSTK_TEMPERATURE|
                                                 LPSTK_LIGHT|
-                                                //LPSTK_HALL_EFFECT
-                                                LPSTK_ACCELEROMETER),
+                                                //LPSTK_HALL_EFFECT|
+                                                LPSTK_ACCELEROMETER|
+                                                LPSTK_GPS),
                                                 2000);
 #endif /* LPSTK */
     Ssf_init(sem);
@@ -629,7 +630,7 @@ void Sensor_process(void)
             if(Ssf_getConfigInfo(&configInfo) == true)
             {
                 /* Save the config information */
-                printf("We have saved config, frameControl=%#X\n", configInfo.frameControl);
+                //printf("We have saved config, frameControl=%#X\n", configInfo.frameControl);
                 configSettings.frameControl = configInfo.frameControl;
                 configSettings.reportingInterval = configInfo.reportingInterval;
                 configSettings.pollingInterval = configInfo.pollingInterval;
@@ -1545,7 +1546,6 @@ static bool sendSensorMessage(ApiMac_sAddr_t *pDstAddr, Smsgs_sensorMsg_t *pMsg)
     uint8_t *pMsgBuf;
     uint16_t len = SMSGS_BASIC_SENSOR_LEN;
 
-    printf("In sendSensorMessage, frameCtrl=%#0X\n", pMsg->frameControl);
     /* Figure out the length */
     if(pMsg->frameControl & Smsgs_dataFields_tempSensor)
     {
@@ -1674,7 +1674,6 @@ static bool sendSensorMessage(ApiMac_sAddr_t *pDstAddr, Smsgs_sensorMsg_t *pMsg)
 #if defined(GPS_SENSOR)
         if(pMsg->frameControl & Smsgs_dataFields_gpsSensor)
         {
-            printf("Encoding GPS data\n");
             pBuf = Util_bufferUint32(pBuf,
                                      pMsg->gpsSensor.latitude);
             pBuf = Util_bufferUint32(pBuf,
@@ -1763,7 +1762,8 @@ static void processConfigRequest(ApiMac_mcpsDataInd_t *pDataInd)
                                                              LPSTK_TEMPERATURE|
                                                              LPSTK_LIGHT|
                                                              LPSTK_HALL_EFFECT|
-                                                             LPSTK_ACCELEROMETER),
+                                                             LPSTK_ACCELEROMETER|
+                                                             LPSTK_GPS),
                                                              reportingInterval);
 #endif /* LPSTK */
             }
