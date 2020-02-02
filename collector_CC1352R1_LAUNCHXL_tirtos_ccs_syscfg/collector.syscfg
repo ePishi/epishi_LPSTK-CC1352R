@@ -1,148 +1,125 @@
-/*
- * Copyright (c) 2018, Texas Instruments Incorporated
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * *  Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * *  Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * *  Neither the name of Texas Instruments Incorporated nor the names of
- *    its contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-// @cliArgs --board /ti/boards/CC1352R1_LAUNCHXL
+// These arguments were used when this file was generated. They will be automatically applied on subsequent loads 
+// via the GUI or CLI invocations. Run CLI with '--help' for additional information on how to override these arguments.
+// @cliArgs --board "/ti/boards/.meta/CC1352R1_LAUNCHXL" --product "simplelink_cc13x2_26x2_sdk@3.40.00.02"
+// @versions {"data":"2019083011","timestamp":"2019083011","tool":"1.2.952","templates":"2019083011"}
 
-/*
- *  collector.syscfg
- */
-
-/* ======== RF ======== */
 var RF = scripting.addModule("/ti/drivers/RF");
-
-/* If an antenna component exists, assign it to the RF instance */
-if (system.deviceData.board && system.deviceData.board.components.RF) {
-    RF.$hardware = system.deviceData.board.components.RF;
-}
-
-/* ======== UART Display ======== */
+var CCFG = scripting.addModule("/ti/devices/CCFG");
 var Display = scripting.addModule("/ti/display/Display");
-var Display_UART = Display.addInstance();
-
-/* if a xds110Uart component exists, assign it to the Display_UART instance */
-if (system.deviceData.board && system.deviceData.board.components.XDS110UART) {
-    Display_UART.$hardware = system.deviceData.board.components.XDS110UART;
-}
-
-Display_UART.$name = "CONFIG_DISPLAY";                         // Descriptive name for Display
-Display_UART.uart.$name = "CONFIG_DISPLAY_UART";               // Descriptive name for Display_UART
-Display_UART.uart.txPinInstance.$name = "CONFIG_PIN_UART_TX";  // Descriptive name for UART TX PIN
-Display_UART.uart.rxPinInstance.$name = "CONFIG_PIN_UART_RX";  // Descriptive name for UART RX PIN
-
-/* ======== LED Red ======== */
-var LED = scripting.addModule("/ti/drivers/apps/LED");   // Add a LED module
-var LED_R = LED.addInstance();                           // Add a LED module instance for LED_R
-
-/* If a red LED component exists, assign it to the LED_R instance */
-if (system.deviceData.board && system.deviceData.board.components.LED_RED) {
-    LED_R.$hardware = system.deviceData.board.components.LED_RED;
-}
-else
-{
-    LED_R.mode = "Output";  // Set the LED pin to output
-}
-
-LED_R.$name = "CONFIG_LED_RED";
-LED_R.gpioPin.$name = "CONFIG_GPIO_RLED";               // Descriptive name for the LED_R GPIO
-LED_R.gpioPin.mode = "Output";
-LED_R.gpioPin.callbackFunction = "";
-LED_R.gpioPin.pinInstance.$name = "CONFIG_PIN_RLED";    // Descriptive name for LED_R PIN
-
-
-/* ======== LED Green ======== */
-var LED = scripting.addModule("/ti/drivers/apps/LED");   // Add a LED module
-var LED_G = LED.addInstance();                           // Add a LED module instance for LED_G
-
-/* If a red LED component exists, assign it to the LED_G instance */
-if (system.deviceData.board && system.deviceData.board.components.LED_GREEN) {
-    LED_G.$hardware = system.deviceData.board.components.LED_GREEN;
-}
-else
-{
-    LED_G.mode = "Output";  // Set the LED pin to output
-}
-
-LED_G.$name = "CONFIG_LED_GREEN";
-LED_G.gpioPin.$name = "CONFIG_GPIO_GLED";               // Descriptive name for the LED_G GPIO
-LED_G.gpioPin.mode = "Output";
-LED_G.gpioPin.callbackFunction = "";
-LED_G.gpioPin.pinInstance.$name = "CONFIG_PIN_GLED";    // Descriptive name for LED_G PIN
-
-/* ======== Left Button ======== */
-var BUTTON = scripting.addModule("/ti/drivers/apps/Button");    // Add a BUTTON module
-var BUTTON_L = BUTTON.addInstance();                            // Add a BUTTON module instance for BUTTON_L
-
-/* If a BUTTON0 component exists, assign it to the BUTTON_L instance */
-if (system.deviceData.board && system.deviceData.board.components["BTN-1"]) {
-    BUTTON_L.$hardware = system.deviceData.board.components["BTN-1"];
-}
-
-BUTTON_L.$name = "CONFIG_BTN_LEFT";
-BUTTON_L.gpioPin.$name = "CONFIG_GPIO_BTN1";             // Descriptive name for the BUTTON_L GPIO
-BUTTON_L.gpioPin.pull = "Pull Up";                       // Use Pull up resistor
-BUTTON_L.gpioPin.interruptTrigger = "Falling Edge";
-BUTTON_L.gpioPin.pinInstance.$name = "CONFIG_PIN_BTN1";  // Descriptive name for the BUTTON_L PIN
-
-/* ======== Right Button ======== */
-var BUTTON = scripting.addModule("/ti/drivers/apps/Button");    // Add a BUTTON module
-var BUTTON_R = BUTTON.addInstance();                            // Add a BUTTON module instance for BUTTON_R
-
-/* If a BUTTON0 component exists, assign it to the BUTTON_R instance */
-if (system.deviceData.board && system.deviceData.board.components["BTN-2"]) {
-    BUTTON_R.$hardware = system.deviceData.board.components["BTN-2"];
-}
-
-BUTTON_R.$name = "CONFIG_BTN_RIGHT";
-BUTTON_R.gpioPin.$name = "CONFIG_GPIO_BTN2";             // Descriptive name for the BUTTON_R GPIO
-BUTTON_R.gpioPin.pull = "Pull Up";                       // Use Pull up resistor
-BUTTON_R.gpioPin.interruptTrigger = "Falling Edge";
-BUTTON_R.gpioPin.pinInstance.$name = "CONFIG_PIN_BTN2";  // Descriptive name for the BUTTON_R PIN
-
-/* ======== NVS ======== */
-var NVS = scripting.addModule("/ti/drivers/NVS");        // Add a NVS module
-var NVS_INT = NVS.addInstance();                         // Add an internal NVS module instance
-
-NVS_INT.$name = "CONFIG_NVSINTERNAL";
-NVS_INT.internalFlash.regionBase = 0x4E000;              // Collector project has 4 NV pages default
-NVS_INT.internalFlash.regionSize = 0x8000;
-
-/* ======== TI-15.4 Stack ======== */
-var TI154Stack = scripting.addModule("/ti/ti154stack/ti154stack");
-TI154Stack.project = "collector";
-TI154Stack.lockProject = true;
-
-/* ======== Device ======== */
-var device = scripting.addModule("ti/devices/CCFG");
-const ccfgSettings = system.getScript("/ti/common/lprf_ccfg_settings.js").ccfgSettings;
-for(var setting in ccfgSettings)
-{
-    device[setting] = ccfgSettings[setting];
-}
+var Display1 = Display.addInstance();
+var LED = scripting.addModule("/ti/drivers/apps/LED");
+var LED1 = LED.addInstance();
+var LED2 = LED.addInstance();
+var Button = scripting.addModule("/ti/drivers/apps/Button");
+var Button1 = Button.addInstance();
+var Button2 = Button.addInstance();
+var NVS = scripting.addModule("/ti/drivers/NVS");
+var NVS1 = NVS.addInstance();
+var ti154stack = scripting.addModule("/ti/ti154stack/ti154stack");
+var Power = scripting.addModule("/ti/drivers/Power");
+var Board = scripting.addModule("/ti/drivers/Board");
+var DriverLib = scripting.addModule("/ti/devices/DriverLib");
+// Enable Bootloader - Enable ROM Bootloader, for flashing from external host
+CCFG.enableBootloader = true;
+// Enable Bootloader Backdoor - When enabling the Bootloader Backdoor, the Bootloader can be activated externally by pulling a pin, even when a valid flash image is present. Note, enabling the backdoor allows an external host to read back a flash image from the device
+CCFG.enableBootloaderBackdoor = true;
+// Bootloader Backdoor DIO - DIO (pin) to trigger Bootloader backdoor, this pin is only needed at boot
+CCFG.dioBootloaderBackdoor = 15;
+// Trigger Level of Bootloader Backdoor - Active high or low on selected DIO to open boot loader backdoor
+CCFG.levelBootloaderBackdoor = "Active low";
+// Name
+CCFG.ccfgTemplate.$name = "ti_devices_CCFGTemplate0";
+// Use Hardware - Select the hardware to use, or 'None' to use available header pins
+Display1.$hardware = system.deviceData.board.components.XDS110UART;
+// Name - The C/C++ identifier used in applications as the index parameter passed to Display runtime APIs
+Display1.$name = "CONFIG_DISPLAY";
+// Name - The C/C++ identifier used in applications as the index parameter passed to UART runtime APIs
+Display1.uart.$name = "CONFIG_DISPLAY_UART";
+// Name
+Display1.uart.txPinInstance.$name = "CONFIG_PIN_UART_TX";
+// Name
+Display1.uart.rxPinInstance.$name = "CONFIG_PIN_UART_RX";
+// Name
+Display1.uart.uart.$name = "MyUART1";
+// Use Hardware - Select the hardware to use, or 'None' to use available header pins
+LED1.$hardware = system.deviceData.board.components.LED_RED;
+// Name - The C/C++ identifier used in applications as the index parameter passed to LED runtime APIs
+LED1.$name = "CONFIG_LED_RED";
+// Mode - Select the GPIO mode
+LED1.gpioPin.mode = "Output";
+// Callback Function - The name of the callback function called when this GPIO pin triggers an interrupt, or 'NULL' if it's specified at runtime
+LED1.gpioPin.callbackFunction = "";
+// Name - The C/C++ identifier used in applications as the index parameter passed to GPIO runtime APIs
+LED1.gpioPin.$name = "CONFIG_GPIO_RLED";
+// Name
+LED1.gpioPin.pinInstance.$name = "CONFIG_PIN_RLED";
+// Use Hardware - Select the hardware to use, or 'None' to use available header pins
+LED2.$hardware = system.deviceData.board.components.LED_GREEN;
+// Name - The C/C++ identifier used in applications as the index parameter passed to LED runtime APIs
+LED2.$name = "CONFIG_LED_GREEN";
+// Mode - Select the GPIO mode
+LED2.gpioPin.mode = "Output";
+// Callback Function - The name of the callback function called when this GPIO pin triggers an interrupt, or 'NULL' if it's specified at runtime
+LED2.gpioPin.callbackFunction = "";
+// Name - The C/C++ identifier used in applications as the index parameter passed to GPIO runtime APIs
+LED2.gpioPin.$name = "CONFIG_GPIO_GLED";
+// Name
+LED2.gpioPin.pinInstance.$name = "CONFIG_PIN_GLED";
+// Use Hardware - Select the hardware to use, or 'None' to use available header pins
+Button1.$hardware = system.deviceData.board.components["BTN-1"];
+// Name - The C/C++ identifier used in applications as the index parameter passed to Button runtime APIs
+Button1.$name = "CONFIG_BTN_LEFT";
+// Pull - Specifies the internal pull-up or pull-down resistor configuration of this GPIO pin.
+Button1.gpioPin.pull = "Pull Up";
+// Interrupt Trigger - Specifies when or if interrupts are triggered
+Button1.gpioPin.interruptTrigger = "Falling Edge";
+// Name - The C/C++ identifier used in applications as the index parameter passed to GPIO runtime APIs
+Button1.gpioPin.$name = "CONFIG_GPIO_BTN1";
+// Name
+Button1.gpioPin.pinInstance.$name = "CONFIG_PIN_BTN1";
+// Use Hardware - Select the hardware to use, or 'None' to use available header pins
+Button2.$hardware = system.deviceData.board.components["BTN-2"];
+// Name - The C/C++ identifier used in applications as the index parameter passed to Button runtime APIs
+Button2.$name = "CONFIG_BTN_RIGHT";
+// Pull - Specifies the internal pull-up or pull-down resistor configuration of this GPIO pin.
+Button2.gpioPin.pull = "Pull Up";
+// Interrupt Trigger - Specifies when or if interrupts are triggered
+Button2.gpioPin.interruptTrigger = "Falling Edge";
+// Name - The C/C++ identifier used in applications as the index parameter passed to GPIO runtime APIs
+Button2.gpioPin.$name = "CONFIG_GPIO_BTN2";
+// Name
+Button2.gpioPin.pinInstance.$name = "CONFIG_PIN_BTN2";
+// Name - The C/C++ identifier used in applications as the index parameter passed to NVS runtime APIs
+NVS1.$name = "CONFIG_NVSINTERNAL";
+// Name
+NVS1.internalFlash.$name = "ti_drivers_nvs_NVSCC26XX0";
+// Region Base - Base address of the region. Must be aligned on an integer multiple of the sector size.
+NVS1.internalFlash.regionBase = 0x4E000;
+// Region Size - Size of the region in bytes. Must be a non-zero multiple of the Sector Size
+NVS1.internalFlash.regionSize = 0x8000;
+// Lock Project Type - Sets project-specific configs to read-only. Always hidden
+ti154stack.lockProject = true;
+// Pan ID - Configures personal area network ID
+ti154stack.panID = 0x2020;
+// Name
+ti154stack.radioConfig.$name = "ti_devices_radioconfig_settings_prop0";
+// Name
+ti154stack.radioConfig.codeExportConfig.$name = "ti_devices_radioconfig_code_export_param0";
+// Name
+ti154stack.aesccmModule.$name = "CONFIG_AESCCM_0";
+var DMA = scripting.addModule("/ti/drivers/DMA");
+var multi_stack_validate = scripting.addModule("/ti/easylink/multi_stack_validate");
+// Suggest solution
+Display1.uart.uart.$suggestSolution = "UART1";
+// Suggest solution
+Display1.uart.uart.txPin.$suggestSolution = "19";
+// Suggest solution
+Display1.uart.uart.rxPin.$suggestSolution = "18";
+// Suggest solution
+LED1.gpioPin.gpioPin.$suggestSolution = "11";
+// Suggest solution
+LED2.gpioPin.gpioPin.$suggestSolution = "12";
+// Suggest solution
+Button1.gpioPin.gpioPin.$suggestSolution = "21";
+// Suggest solution
+Button2.gpioPin.gpioPin.$suggestSolution = "20";
