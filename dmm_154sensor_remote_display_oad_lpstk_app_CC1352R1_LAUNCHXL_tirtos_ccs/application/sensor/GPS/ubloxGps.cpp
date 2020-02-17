@@ -1,18 +1,20 @@
 #include <stdio.h>
-#include "sensor/GPS/SparkFun_Ublox_Arduino_Library.hpp"
 #include "sensor/GPS/ubloxGps.h"
+#include "sensor/GPS/SparkFun_Ublox_Arduino_Library.hpp"
 
-static SFE_UBLOX_GPS* ubloxGpsP = NULL;
-static GpsLocation gpsLocation;
+static GpsHandle gpsHandle = NULL;
+static GpsLocation gpsLocation = {0};
 //static DebugStream debugStream;
 
 void ubloxGps_init(void) {
 }
 
-bool ubloxGps_open(I2C_Handle i2cHandle) {
+GpsHandle ubloxGps_open(I2C_Handle i2cHandle) {
+    if (i2cHandle == NULL)
+        return NULL;
 
-    if (ubloxGpsP == NULL) {
-        ubloxGpsP = new SFE_UBLOX_GPS();
+    if (gpsHandle == NULL) {
+        SFE_UBLOX_GPS* ubloxGpsP = new SFE_UBLOX_GPS();
         //ubloxGpsP->setDebugStream(&debugStream);
         //ubloxGpsP->enableDebugging();
         //ubloxGpsP->enableNMEAOutput();
@@ -27,12 +29,20 @@ bool ubloxGps_open(I2C_Handle i2cHandle) {
         }
         */
         ubloxGpsP->begin(i2cHandle);
+
+        gpsHandle = new GpsConfig();
+        gpsHandle->i2cHandle = i2cHandle;
+        gpsHandle->ubloxGpsP = ubloxGpsP;
     }
 
-    return true;
+    return gpsHandle;
 }
 
-GpsLocation* ubloxGps_getLocation(void) {
+GpsLocation* ubloxGps_getLocation(GpsHandle gpsHandle) {
+    if (gpsHandle == NULL)
+        return NULL;
+
+    SFE_UBLOX_GPS* ubloxGpsP = (SFE_UBLOX_GPS*) gpsHandle->ubloxGpsP;
     if (ubloxGpsP != NULL) {
         gpsLocation.latitude    = ubloxGpsP->getLatitude();
         gpsLocation.longitude   = ubloxGpsP->getLongitude();

@@ -127,6 +127,8 @@ static OPT3001_Params  opt3001Params;
 static float luxHiLim;
 static float luxLoLim;
 
+static GpsHandle gpsHandle;
+
 static volatile bool sc_ready;
 
 // SCIF driver callback: Task control interface ready (non-blocking task
@@ -137,7 +139,7 @@ static void scCtrlReadyCallback(void);
 
 static void closeI2C(void)
 {
-    if (!(hdc2010Handle || opt3001Handle))
+    if (!(hdc2010Handle || opt3001Handle || gpsHandle))
     {
         I2C_close(i2cHandle);
         i2cHandle = NULL;
@@ -346,7 +348,8 @@ uint8_t Lpstk_openGpsSensor_i2c(void)
         i2cHandle = I2C_open(CONFIG_I2C_0, &i2cParams);
     }
     if (i2cHandle != NULL) {
-        if (ubloxGps_open(i2cHandle)) {
+        gpsHandle = ubloxGps_open(i2cHandle);
+        if (gpsHandle) {
             openStatus = LPSTK_SUCCESS;
         }
         else {
@@ -411,14 +414,14 @@ void Lpstk_readAccelerometerSensor(Lpstk_Accelerometer *accel)
     accel->z = scifTaskData.spiAccelerometer.output.z;
 }
 
-GpsLocation* Lpstk_readGpsSensor_i2c(Lpstk_Gps *gps)
+GpsLocation* Lpstk_readGpsSensor_i2c()
 {
-    if (i2cHandle == NULL) {
-       printf("Lpstk_readGpsSensor() - ERROR: i2cHandle=NULL") ;
+    if (gpsHandle == NULL) {
+       printf("Lpstk_readGpsSensor() - ERROR: gpsHandle=NULL") ;
        return NULL;
     }
 
-    return ubloxGps_getLocation();
+    return ubloxGps_getLocation(gpsHandle);
 }
 
 void Lpstk_readGpsSensor(Lpstk_Gps *gps)

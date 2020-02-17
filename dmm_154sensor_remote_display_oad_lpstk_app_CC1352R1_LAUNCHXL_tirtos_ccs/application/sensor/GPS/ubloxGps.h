@@ -7,6 +7,13 @@
 extern "C" {
 #endif
 
+typedef struct GpsConfig {
+    I2C_Handle i2cHandle;
+    void* ubloxGpsP;
+} GpsConfig;
+
+typedef struct GpsConfig *GpsHandle;
+
 typedef struct {
     uint32_t latitude;
     uint32_t longitude;
@@ -15,8 +22,8 @@ typedef struct {
 } GpsLocation;
 
 void ubloxGps_init(void);
-bool ubloxGps_open(I2C_Handle);
-GpsLocation* ubloxGps_getLocation(void);
+GpsHandle ubloxGps_open(I2C_Handle);
+GpsLocation* ubloxGps_getLocation(GpsHandle gpsHandle);
 
 #ifdef __cplusplus
 }
