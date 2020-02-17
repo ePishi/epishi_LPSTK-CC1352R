@@ -228,12 +228,14 @@ STATIC Smsgs_accelSensorField_t accelerometerSensor =
     { 0 };
 #endif /* LPSTK */
 
+#ifdef GPS_SENSOR
 /*!
  GPS Sensor field - valid only if Smsgs_dataFields_humiditySensor
  is set in frameControl.
  */
 STATIC Smsgs_gpsSensorField_t gpsSensor =
     { 0 };
+#endif /* GPS_SENSOR */
 
 #endif //OAD_IMG_A
 
@@ -474,7 +476,7 @@ void Sensor_init(void)
                                    Smsgs_dataFields_hallEffectSensor |
                                    Smsgs_dataFields_accelSensor;
 #endif /* LPSTK */
-#if defined(GPS_SENSOR)
+#ifdef GPS_SENSOR
     configSettings.frameControl |= Smsgs_dataFields_gpsSensor;
 #endif /* GPS_SENSOR */
     configSettings.frameControl |= Smsgs_dataFields_msgStats;
@@ -516,7 +518,11 @@ void Sensor_init(void)
                                                 LPSTK_LIGHT|
                                                 //LPSTK_HALL_EFFECT|
                                                 LPSTK_ACCELEROMETER|
-                                                LPSTK_GPS),
+#ifdef GPS_SENSOR
+                                                LPSTK_GPS|
+#endif /* GPS_SENSOR */
+                                                0), // This 0 is just syntactic sugar
+                                                    // It allows us to surround LPST_GPS in ifdef
                                                 2000);
 #endif /* LPSTK */
     Ssf_init(sem);
@@ -1483,11 +1489,13 @@ static void processSensorMsgEvt(void)
     }
 #endif /* LPSTK */
 
+#ifdef GPS_SENSOR
     if(sensor.frameControl & Smsgs_dataFields_gpsSensor)
     {
         memcpy(&sensor.gpsSensor, &gpsSensor,
                sizeof(Smsgs_gpsSensorField_t));
     }
+#endif /* GPS_SENSOR */
 
     /* inform the user interface */
     Ssf_sensorReadingUpdate(&sensor);
@@ -1523,7 +1531,7 @@ static void readSensors(void)
     accelerometerSensor.xTiltDet = accel.xTiltDet;
     accelerometerSensor.yTiltDet = accel.yTiltDet;
 #endif /* LPSTK */
-#if defined(GPS_SENSOR)
+#ifdef GPS_SENSOR
     Lpstk_Gps gps;
     Lpstk_getGps(&gps);
     gpsSensor.latitude = gps.latitude;
@@ -1578,7 +1586,7 @@ static bool sendSensorMessage(ApiMac_sAddr_t *pDstAddr, Smsgs_sensorMsg_t *pMsg)
         len += sizeof(Smsgs_accelSensorField_t);
     }
 #endif /* LPSTK */
-#if defined(GPS_SENSOR)
+#ifdef GPS_SENSOR
     if(pMsg->frameControl & Smsgs_dataFields_gpsSensor)
     {
         len += sizeof(Smsgs_gpsSensorField_t);
@@ -1671,7 +1679,7 @@ static bool sendSensorMessage(ApiMac_sAddr_t *pDstAddr, Smsgs_sensorMsg_t *pMsg)
             *pBuf++ = pMsg->accelerometerSensor.yTiltDet;
         }
 #endif /* LPSTK */
-#if defined(GPS_SENSOR)
+#ifdef GPS_SENSOR
         if(pMsg->frameControl & Smsgs_dataFields_gpsSensor)
         {
             pBuf = Util_bufferUint32(pBuf,
@@ -1763,7 +1771,11 @@ static void processConfigRequest(ApiMac_mcpsDataInd_t *pDataInd)
                                                              LPSTK_LIGHT|
                                                              LPSTK_HALL_EFFECT|
                                                              LPSTK_ACCELEROMETER|
-                                                             LPSTK_GPS),
+#ifdef GPS_SENSOR
+                                                             LPSTK_GPS|
+#endif /* GPS_SENSOR */
+                                                             0), // This 0 is just syntactic sugar
+                                                                 // It allows us to surround LPST_GPS in ifdef
                                                              reportingInterval);
 #endif /* LPSTK */
             }
@@ -1911,7 +1923,7 @@ static uint16_t validateFrameControl(uint16_t frameControl)
     }
 #endif /* LPSTK */
 #endif
-#if defined(GPS_SENSOR)
+#ifdef GPS_SENSOR
     if(frameControl & Smsgs_dataFields_gpsSensor)
     {
         newFrameControl |= Smsgs_dataFields_gpsSensor;

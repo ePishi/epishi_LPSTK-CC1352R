@@ -369,10 +369,12 @@ static void powerUpSensors(Lpstk_SensorMask sensors)
     {
         Lpstk_openHallEffectSensor();
     }
+#ifdef GPS_SENSOR
     if(sensors & LPSTK_GPS)
     {
         Lpstk_openGpsSensor();
     }
+#endif /* GPS_SENSOR */
 }
 
 static void shutDownSensors(Lpstk_SensorMask sensors)
@@ -397,10 +399,12 @@ static void shutDownSensors(Lpstk_SensorMask sensors)
     {
         Lpstk_shutdownHallEffectSensor();
     }
+#ifdef GPS_SENSOR
     if(sensors & LPSTK_GPS)
     {
         Lpstk_shutdownGpsSensor();
     }
+#endif /* GPS_SENSOR */
 }
 
 static void processSensorRead(Lpstk_SensorMask sensors, bool shutdown)
@@ -435,15 +439,17 @@ static void processSensorRead(Lpstk_SensorMask sensors, bool shutdown)
         Lpstk_readHallEffectSensor(&lpstkSensors.halleffectMagFlux);
     }
 
+#ifdef GPS_SENSOR
     if(sensors & LPSTK_GPS)
     {
         Lpstk_readGpsSensor(&lpstkSensors.gps);
-        /* GPS should only be shut down from a LPSTK_EV_SENSOR_SHUTDOWN
-         * since the accelerometer is handled by the sensor controller
-         * therefore un-set the GPS from the mask here to prevent it
-         * from being shut down if shutdown == true*/
+        // GPS should only be shut down from a LPSTK_EV_SENSOR_SHUTDOWN
+        // since the accelerometer is handled by the sensor controller
+        // therefore un-set the GPS from the mask here to prevent it
+        // from being shut down if shutdown == true
         sensors ^= LPSTK_GPS;
     }
+#endif /* GPS_SENSOR */
 
     if(shutdown)
     {
